@@ -34,6 +34,14 @@ public class WorkspaceManager {
         );
     }
 
+    public WorkspaceManager(DrawPanelController drawPanelController) {
+        borderDriver = new LineDriverAdapter(
+                drawPanelController,
+                LineFactory.getDottedLine(),
+                "border"
+        );
+    }
+
     /**
      * Sets the current workspace canvas shape and draws its border.
      * <p>
