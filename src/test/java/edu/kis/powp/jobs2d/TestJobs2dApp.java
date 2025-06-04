@@ -162,8 +162,8 @@ public class TestJobs2dApp {
 
     public static void setup(Application application) {
         FeatureManager.registerFeature(new DriverFeature());
-        FeatureManager.registerFeature(new WorkspaceFeature());
         FeatureManager.registerFeature(new DrawerFeature());
+        FeatureManager.registerFeature(new WorkspaceFeature());
         FeatureManager.registerFeature(new CommandsFeature());
 
         FeatureManager.initializeAll(application);
@@ -173,23 +173,21 @@ public class TestJobs2dApp {
      * Launch the application.
      */
     public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                Application app = new Application("Jobs 2D");
-                setup(app);
-                setupDrivers(app);
+        EventQueue.invokeLater(() -> {
+            Application app = new Application("Jobs 2D");
+            setup(app);
+            setupDrivers(app);
 
-                setupWorkspaces();
+            setupWorkspaces();
 
-                setupPresetTests(app);
-                setupCommandTests(app);
+            setupPresetTests(app);
+            setupCommandTests(app);
 
-                setupLogger(app);
-                setupWindows(app);
-                setupMouseHandler(app);
+            setupLogger(app);
+            setupWindows(app);
+            setupMouseHandler(app);
 
-                app.setVisibility(true);
-            }
+            app.setVisibility(true);
         });
     }
 

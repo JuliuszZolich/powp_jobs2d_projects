@@ -16,7 +16,7 @@ import edu.kis.powp.jobs2d.plugin.FeaturePlugin;
  */
 public class WorkspaceFeature implements FeaturePlugin {
     private static Application app;
-    private static WorkspaceManager workspaceManager = new WorkspaceManager();
+    private static WorkspaceManager workspaceManager;
 
     /**
      * Initializes the workspace plugin by adding a "Workspaces" component menu to the application.
@@ -24,6 +24,7 @@ public class WorkspaceFeature implements FeaturePlugin {
      * @param application the main {@link Application} instance to which the plugin is attached
      */
     public static void setupWorkspacePlugin(Application application) {
+        workspaceManager = new WorkspaceManager();
         app = application;
         app.addComponentMenu(WorkspaceFeature.class, "Workspaces");
     }
