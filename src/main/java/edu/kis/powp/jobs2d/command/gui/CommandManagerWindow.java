@@ -1,8 +1,9 @@
 package edu.kis.powp.jobs2d.command.gui;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
+import java.awt.event.*;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.*;
 
@@ -13,7 +14,9 @@ import edu.kis.powp.jobs2d.command.DriverCommand;
 import edu.kis.powp.jobs2d.command.manager.CommandHistoryManager;
 import edu.kis.powp.jobs2d.command.manager.DriverCommandManager;
 import edu.kis.powp.jobs2d.drivers.VisitableJob2dDriver;
+import edu.kis.powp.jobs2d.drivers.WorkspaceManager;
 import edu.kis.powp.jobs2d.drivers.adapter.LineDriverAdapter;
+import edu.kis.powp.jobs2d.features.WorkspaceFeature;
 import edu.kis.powp.jobs2d.transformations.ScaleTransformationDecorator;
 import edu.kis.powp.jobs2d.transformations.TransformationDecorator;
 import edu.kis.powp.observer.Subscriber;
@@ -35,6 +38,7 @@ public class CommandManagerWindow extends JFrame implements WindowComponent {
     private JList<CommandHistoryManager.HistoryEntry> commandHistoryList;
     private DefaultListModel<CommandHistoryManager.HistoryEntry> historyListModel;
 
+    private JFrame workspaceWindow = null;
 
 
     /**
@@ -130,6 +134,11 @@ public class CommandManagerWindow extends JFrame implements WindowComponent {
         buttonConstraints.gridy = 5;
         buttonPanel.add(btnRestoreCommand, buttonConstraints);
 
+        JButton btnDisplayWorkspaceWindow = new JButton("Display Workspace Window");
+        btnDisplayWorkspaceWindow.addActionListener((ActionEvent e) -> this.displayWorkspaceWindow());
+        buttonConstraints.gridy = 6;
+        buttonPanel.add(btnDisplayWorkspaceWindow, buttonConstraints);
+
         leftConstraints.gridy = 4;
         leftConstraints.weighty = 0.4;
         leftPanel.add(buttonPanel, leftConstraints);
@@ -157,6 +166,47 @@ public class CommandManagerWindow extends JFrame implements WindowComponent {
         c.gridy = 0;
         c.weightx = 0.8;
         content.add(drawPanel, c);
+
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if (workspaceWindow != null) {
+                    workspaceWindow.dispose();
+                    workspaceWindow = null;
+                }
+            }
+        });
+    }
+
+    private void displayWorkspaceWindow(){
+        if (this.workspaceWindow != null){
+            this.workspaceWindow.setSize(100, this.getHeight());
+            this.workspaceWindow.setLocation(this.getLocation().x - this.workspaceWindow.getWidth(), this.getLocation().y);
+            this.workspaceWindow.setVisible(!this.workspaceWindow.isVisible());
+            return;
+        }
+        this.workspaceWindow = new JFrame();
+        this.workspaceWindow.setTitle("Workspace Window");
+        this.workspaceWindow.setSize(100, this.getHeight());
+        this.workspaceWindow.setLayout(new GridBagLayout());
+        this.workspaceWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        // First time location is slightly over the main window but with next views it's moved to the left
+        this.workspaceWindow.setLocation(this.getLocation().x - this.workspaceWindow.getWidth() - 21, this.getLocation().y);
+        this.workspaceWindow.setVisible(true);
+
+        GridBagConstraints buttonConstraints = new GridBagConstraints();
+        buttonConstraints.fill = GridBagConstraints.HORIZONTAL;
+        buttonConstraints.weightx = 1;
+        buttonConstraints.gridx = 0;
+
+        AtomicInteger i = new AtomicInteger();
+        WorkspaceManager workspaceManager = new WorkspaceManager(this.drawPanelController);
+        WorkspaceFeature.getWorkspaceManager().workspaceShapes.forEach((name, shape) -> {
+            JButton btnDrawWorkspace = new JButton(name);
+            btnDrawWorkspace.addActionListener((ActionEvent e) -> workspaceManager.setWorkspaceCanvaShape(shape));
+            buttonConstraints.gridy = i.getAndIncrement();
+            this.workspaceWindow.add(btnDrawWorkspace, buttonConstraints);
+        });
     }
 
     private void clearCommand() {
@@ -220,11 +270,7 @@ public class CommandManagerWindow extends JFrame implements WindowComponent {
     @Override
     public void HideIfVisibleAndShowIfHidden() {
         updateObserverListField();
-        if (this.isVisible()) {
-            this.setVisible(false);
-        } else {
-            this.setVisible(true);
-        }
+        this.setVisible(!this.isVisible());
     }
 
 }
