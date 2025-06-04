@@ -112,7 +112,7 @@ public class TestJobs2dApp {
     }
 
     private static void setupWorkspaces() {
-        Map<String, CanvaShape> workspaceShapes = new HashMap<>();
+        Map<String, CanvaShape> workspaceShapes = WorkspaceFeature.getWorkspaceManager().workspaceShapes;
         workspaceShapes.put("Rectangle canvas", new RectangleCanva(400, 400));
         workspaceShapes.put("A4 format canvas", RectangleCanvaFactory.getVerticalA4Canva());
         workspaceShapes.put("My Circular canvas", new CircularCanva(200));
