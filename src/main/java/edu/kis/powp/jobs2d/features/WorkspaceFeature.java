@@ -39,7 +39,7 @@ public class WorkspaceFeature implements FeaturePlugin {
      *
      * @return the {@code WorkspaceManager} managing the current canvas shape
      */
-    public WorkspaceManager getWorkspaceManager() {
+    public static WorkspaceManager getWorkspaceManager() {
         return workspaceManager;
     }
 
